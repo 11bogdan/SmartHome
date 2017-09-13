@@ -7,7 +7,7 @@ public abstract class Device implements IObservable{
 		callback = notify;
 	}
 	
-	public void On(boolean s) {
+	public void on(boolean s) {
 		state = s;
 	}
 	
@@ -17,6 +17,10 @@ public abstract class Device implements IObservable{
         
         public void setName(String n) {
             name = n;
+        }
+        
+        public String getName() {
+            return name;
         }
 	
         protected String name;
