@@ -1,7 +1,8 @@
 package smarthomelib;
+import java.util.function.*;
 
 public interface IObservable {
 	
-	void SignUp(Method m);
+	void signUp(Function m);
 
 }

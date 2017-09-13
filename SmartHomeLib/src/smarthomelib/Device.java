@@ -1,19 +1,25 @@
 package smarthomelib;
+import java.util.function.*;
 
 public abstract class Device implements IObservable{
 	
-	public void SignUp (Method m) {
-		callback = m;
+	public void signUp (Function notify) {
+		callback = notify;
 	}
 	
 	public void On(boolean s) {
 		state = s;
 	}
 	
-	public void getState() {
+	public boolean getState() {
 		return state;
 	}
+        
+        public void setName(String n) {
+            name = n;
+        }
 	
-	private boolean state;
-	private Method callback;
+        protected String name;
+	protected boolean state;
+	protected Function callback;
 }
