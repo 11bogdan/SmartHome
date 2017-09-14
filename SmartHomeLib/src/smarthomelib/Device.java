@@ -15,7 +15,7 @@ public abstract class Device implements IObservable{
 		return state;
 	}
         
-        public void setName(String n) {
+        private void setName(String n) {
             name = n;
         }
         

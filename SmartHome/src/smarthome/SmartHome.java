@@ -15,17 +15,51 @@ import java.util.function.*;
  *
  * @author Богдан
  */
-public class SmartHome {
+public class SmartHome implements IObserver {
     
     public SmartHome() {
         devices = new ArrayList<Device>();
     }
     
+    public void notifyObserver(IObservable o) {
+        if (Device.class.isInstance(o)){
+            // do somth
+        }
+    }
+    
+    public void add(String name, String type) {
+        Device d = getDevice(name);
+        if (d != null) 
+            throw new IllegalArgumentException(
+                "This name is already taken");
+        
+        Device newDevice = CreateDevice(name, type);
+        devices.add(newDevice);
+    }
+    
+    public void remove(String id) {
+        Device d = getDevice(id);
+        if (d == null) 
+            throw new IllegalArgumentException(
+                "Device doesn't exist");
+        
+        devices.remove(d);
+    }
+    
+    public void off(String id) {
+        Device d = getDevice(id);
+        d.on(false);
+    }
     
     public void off(String id, Date dt) {
         Device d = getDevice(id);
         Operation callback = () -> d.on(false);
         timer.schedule(new DeviceTask(callback), dt);
+    }
+    
+    public void on(String id) {
+        Device d = getDevice(id);
+        d.on(true);
     }
     
     public void on(String id, Date dt) {
@@ -39,39 +73,65 @@ public class SmartHome {
      */
     public static void main(String[] args) {
         /*
-        1st place - command:
-            add
-            remove
+            on/off/display      id
             ------
-            add/remove on/off display id
-            ------
-            on/off id time
-        
-        2nd place - device name
-        (on|off|display)
-            name
-        3rd place - timing (hh:mm)
+            on/off              id time
+            add/remove          id type
         */
         
-        String com = args[0];
-        
+        SmartHome sm = new SmartHome();
+        try {
+            int len = args.length;
+            if (len == 1) {
+                throw new Exception("Arguments required");
+            }
+            
+            String com = args[1];
+            switch (com) {
+                case "add":
+                    if (len < 4) {
+                        throw new Exception("Not enough args for add");
+                    }
+                    sm.add(args[2], args[3]);
+                    break;
+                
+                case "remove":
+                    if (len < 3) {
+                        throw new Exception("Not enough args for remove");
+                    }
+                    sm.remove(args[2]);
+                    break;
+                    
+                case "on":
+                    if (len < 3) {
+                        throw new Exception("Not enough args for remove");
+                    }
+                    sm.remove(args[2]);
+                    break;
+            }
+        } catch (Exception e) {
+            
+        }
     }
     
-    private Device getDevice(String id) {
+    public Device getDevice(String id) {
         Device device = null;
-        Iterator<Device> it = devices.iterator();
+        Iterator<Device> iterator = devices.iterator();
         
-        while (it.hasNext()) {
-            Device d = it.next();
+        while (iterator.hasNext()) {
+            Device d = iterator.next();
             if (d.getName() == id) {
                 device = d;
                 break;
             }
         }
-        if (device == null) {
-            throw new IllegalArgumentException("No such device exist");
-        }
+
         return device;
+    }
+    
+    private Device CreateDevice(String id, String type) {
+        //TODO: implement the method
+        return new TVSet(id);
     }
     
     private ArrayList<Device> devices;
@@ -80,14 +140,14 @@ public class SmartHome {
     public class DeviceTask extends TimerTask {
         
         public DeviceTask(Operation o) {
-            callback = o;
+            callback = (Runnable)o;
         }
         
         @Override
         public void run() {
-            System.out.println("I'm Mr. MI6, look at me!");
+            callback.run();
         }
         
-        Operation callback;
+        Runnable callback;
     }
 }
