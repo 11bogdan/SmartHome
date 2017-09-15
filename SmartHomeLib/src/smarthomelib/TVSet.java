@@ -14,7 +14,9 @@ public class TVSet extends Device {
     }
 
     public void setChannel(int c) {
-        channel = c;
+        if (c >= MIN_CH && c <= MAX_CH) {
+            channel = c;
+        }
     }
 
     public int getChannel () {
@@ -35,6 +37,17 @@ public class TVSet extends Device {
     
     public void soundDown() {
         sound = sound == MIN_S ? MIN_S : channel-1;
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("TVSet '"+name+"' is "+(state?"on":"off")+"\n");
+        if (state) {
+            sb.append("Current channel: "+channel+"\n");
+            sb.append("Sound: "+sound+"\n");
+        }
+        return sb.toString();
     }
 
     private int sound;
